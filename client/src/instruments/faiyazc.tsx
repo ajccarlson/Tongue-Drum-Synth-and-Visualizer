@@ -1,93 +1,74 @@
-// 3rd party library imports
 import * as Tone from 'tone';
 import classNames from 'classnames';
 import { List, Range } from 'immutable';
 import React from 'react';
 
-// project imports
 import { Instrument, InstrumentProps } from '../Instruments';
-/** ------------------------------------------------------------------------ **
- * Contains implementation of components for Piano.
- ** ------------------------------------------------------------------------ */
+// import { getNodeText } from '@testing-library/react';
 
-interface PianoKeyProps {
-  note: string; // C, Db, D, Eb, E, F, Gb, G, Ab, A, Bb, B
+interface TromboneProps {
+  note: {slide: [position, partial], name: note};
   duration?: string;
-  synth?: Tone.Synth; // Contains library code for making sound
-  minor?: boolean; // True if minor key, false if major key
-  octave: number;
-  index: number; // octave + index together give a location for the piano key
+  synth?: Tone.Synth;
 }
 
-export function PianoKey({
-  note,
-  synth,
-  minor,
-  index,
-}: PianoKeyProps): JSX.Element {
-  /**
-   * This React component corresponds to either a major or minor key in the piano.
-   * See `PianoKeyWithoutJSX` for the React component without JSX.
-   */
-  return (
-    // Observations:
-    // 1. The JSX refers to the HTML-looking syntax within TypeScript.
-    // 2. The JSX will be **transpiled** into the corresponding `React.createElement` library call.
-    // 3. The curly braces `{` and `}` should remind you of string interpolation.
+type note = "C" | "Db" | "D" | "Eb" | "E" | "F" | "Gb" | "G" | "Ab" | "A" | "Bb" | "B";
+type position = 7 | 6 | 5 | 4 | 3 | 2 | 1;
+type partial = 1 | 2 | 3 | 4 | 5 | 6;
 
+const notes = List<{slide: [position, partial][], name: note}>([
+  { slide: [[2, 1], [6, 3], [2, 5], [4, 6]], name: 'A' },
+  { slide: [[3, 1], [7, 3], [3, 5], [5, 6]], name: 'Ab'},
+  { slide: [[4, 1], [4, 5], [6, 6]], name: 'G' },
+  { slide: [[5, 1], [5, 5], [7, 6]], name: 'Gb'},
+  { slide: [[6, 1], [1, 2], [1, 4], [6, 5]], name: 'F' },
+  { slide: [[7, 1], [2, 2], [2, 4], [7, 5]], name: 'E' },
+  { slide: [[3, 2], [3, 4]], name: 'Eb'},
+  { slide: [[4, 2], [1, 3], [4, 4]], name: 'D' },
+  { slide: [[5, 2], [2, 3], [5, 4]], name: 'Db'},
+  { slide: [[6, 2], [3, 3], [6, 4], [1, 6]], name: 'C' },
+  { slide: [[7, 2], [4, 3], [7, 4], [2, 6]], name: 'B' },
+  { slide: [[1, 1], [5, 3], [1, 5], [3, 6]], name: 'Bb'},
+]);
+
+function posToNote(slide_position: position, partial: partial): Tone.Unit.Frequency
+{
+  for (const note of notes)
+  {
+    if (note.slide.includes([slide_position, partial]))
+    {
+      let i = 2;
+      for (const pattern of note.slide)
+      {
+        if (pattern[0] === slide_position && pattern[1] === partial)
+          return `${note.name}${i}`
+        i++;
+      }
+    }
+  }
+  return "";
+}
+
+export function TromboneSynth({
+  synth
+}: TromboneProps): JSX.Element {
+  let position: position = 1; //
+  let partial: partial = 2;
+
+  let note = posToNote(position, partial);
+  return (
     <div
-      onMouseDown={() => synth?.triggerAttack(`${note}`)} // Question: what is `onMouseDown`?
-      onMouseUp={() => synth?.triggerRelease('+0.25')} // Question: what is `onMouseUp`?
-      className={classNames('ba pointer absolute dim', {
-        // 'bg-black black h3': minor, // minor keys are black
-        'bg-black white h3': minor, // minor keys are black
-        'black bg-white h4': !minor, // major keys are white
-      })}
+      onMouseDown= {() => synth?.triggerAttack(note)}
+      onMouseUp= {() => synth?.triggerRelease()}
+      className= {classNames('ba pointer absolute dim')}
       style={{
         // CSS
-        top: 0,
-        left: `${index * 2}rem`,
-        zIndex: minor ? 1 : 0,
-        width: minor ? '1.5rem' : '2rem',
-        marginLeft: minor ? '0.25rem' : 0,
       }}
-    ></div>
+      ></div>
   );
 }
 
-// eslint-disable-next-line
-function PianoKeyWithoutJSX({
-  note,
-  synth,
-  minor,
-  index,
-}: PianoKeyProps): JSX.Element {
-  /**
-   * This React component for pedagogical purposes.
-   * See `PianoKey` for the React component with JSX (JavaScript XML).
-   */
-  return React.createElement(
-    'div',
-    {
-      onMouseDown: () => synth?.triggerAttack(`${note}`),
-      onMouseUp: () => synth?.triggerRelease('+0.25'),
-      className: classNames('ba pointer absolute dim', {
-        'bg-black black h3': minor,
-        'black bg-white h4': !minor,
-      }),
-      style: {
-        top: 0,
-        left: `${index * 2}rem`,
-        zIndex: minor ? 1 : 0,
-        width: minor ? '1.5rem' : '2rem',
-        marginLeft: minor ? '0.25rem' : 0,
-      },
-    },
-    [],
-  );
-}
-
-function PianoType({ title, onClick, active }: any): JSX.Element {
+function TromboneType({ title, onClick, active }: any): JSX.Element {
   return (
     <div
       onClick={onClick}
@@ -95,27 +76,13 @@ function PianoType({ title, onClick, active }: any): JSX.Element {
         'b--black black': active,
         'gray b--light-gray': !active,
       })}
-    >
-      {title}
-    </div>
+      >
+        {title}
+      </div>
   );
 }
 
-function Piano2({ synth, setSynth }: InstrumentProps): JSX.Element {
-  const keys = List([
-    { note: 'C', idx: 0 },
-    { note: 'Db', idx: 0.5 },
-    { note: 'D', idx: 1 },
-    { note: 'Eb', idx: 1.5 },
-    { note: 'E', idx: 2 },
-    { note: 'F', idx: 3 },
-    { note: 'Gb', idx: 3.5 },
-    { note: 'G', idx: 4 },
-    { note: 'Ab', idx: 4.5 },
-    { note: 'A', idx: 5 },
-    { note: 'Bb', idx: 5.5 },
-    { note: 'B', idx: 6 },
-  ]);
+function Trombone ({ synth, setSynth }: InstrumentProps): JSX.Element {
 
   const setOscillator = (newType: Tone.ToneOscillatorType) => {
     setSynth(oldSynth => {
@@ -141,37 +108,24 @@ function Piano2({ synth, setSynth }: InstrumentProps): JSX.Element {
   ]) as List<OscillatorType>;
 
   return (
-    <div className="pv4">
-      <div className="relative dib h4 w-100 ml4">
-        {Range(2, 7).map(octave =>
-          keys.map(key => {
-            const isMinor = key.note.indexOf('b') !== -1;
-            const note = `${key.note}${octave}`;
-            return (
-              <PianoKey
-                key={note} //react key
-                note={note}
-                synth={synth}
-                minor={isMinor}
-                octave={octave}
-                index={(octave - 2) * 7 + key.idx}
-              />
-            );
-          }),
-        )}
+    <div className='pv4'>
+      <div className='relative dib h4 w-100 ml4'>
+          {Range(1,8).map(s => {
+            // notes.map()
+          })}
       </div>
       <div className={'pl4 pt4 flex'}>
-        {oscillators.map(o => (
-          <PianoType
-            key={o}
-            title={o}
-            onClick={() => setOscillator(o)}
-            active={synth?.oscillator.type === o}
-          />
-        ))}
+          {oscillators.map(o => (
+            <TromboneType
+              key={o}
+              title={"Trombone " + o}
+              onClick={() => setOscillator(o)}
+              active={synth?.oscillator.type === o}
+            />
+          ))}
       </div>
     </div>
   );
 }
 
-export const PianoInstrument = new Instrument('Piano2', Piano2);
+export const TromboneInstrument = new Instrument('Trombone', Trombone);

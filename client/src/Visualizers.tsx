@@ -23,8 +23,15 @@ export class Visualizer {
 export function VisualizerContainer({ visualizer }: VisualizerContainerProps) {
   const { name, draw } = visualizer;
 
+  let analyzerType: Tone.AnalyserType = 'waveform';
+  let analyzerSize = 256;
+  if (visualizer.name != 'waveform') {
+    analyzerType = 'fft';
+    analyzerSize = 1024;
+  }
+
   const analyzer: Tone.Analyser = useMemo(
-    () => new Tone.Analyser('waveform', 256),
+    () => new Tone.Analyser(analyzerType, analyzerSize),
     [],
   );
 

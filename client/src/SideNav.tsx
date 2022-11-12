@@ -194,8 +194,9 @@ function SongsNav({ state, dispatch }: SideNavProps): JSX.Element {
 function RadioButton({ to, text, active, onClick }: RadioButtonProps): JSX.Element {
   return (
     <Link to={to} className="no-underline">
+      
       <div
-        className={classNames('f6 flex items-center black', { fw7: active })}
+        className={classNames('f6 flex items-center black pa2', { 'fw7 bg-light-gray' : active })}
         onClick={onClick}
       >
         {active ? (
@@ -218,7 +219,7 @@ const Section: React.FC<{ title: string }> = ({ title, children }) => {
   return (
     <div className="flex flex-column h-25 bb b--light-gray pa3">
       <div className="fw7 mb2">{title} </div>
-      <div className="flex-auto overflow-scroll">{children}</div>
+      <div className="flex-auto overflow-auto">{children}</div>
     </div>
   );
 };

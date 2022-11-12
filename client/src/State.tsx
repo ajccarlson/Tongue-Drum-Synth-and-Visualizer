@@ -4,10 +4,10 @@ import { List, Map } from 'immutable';
 // project dependencies
 import { PianoInstrument } from './instruments/Piano';
 import { TripleOSCInstrument } from './instruments/TripleOSC';
-import { SpectrumVisualizer } from './visualizers/Spectrum';
 import { slideWhistleInstrument } from './instruments/ajccarlson';
 import { WaveformVisualizer } from './visualizers/Waveform';
 import { pitchVisualizer } from './visualizers/ajccarlson';
+import { SpectrumVisualizer } from './visualizers/Spectrum';
 
 
 /** ------------------------------------------------------------------------ **
@@ -25,8 +25,7 @@ const instruments = List([PianoInstrument, TripleOSCInstrument, slideWhistleInst
  * Start with the default waveform visualizer.
  * Add your visualizers to this list.
  */
-const visualizers = List([WaveformVisualizer, SpectrumVisualizer]);    // similar to Visualizer[]
-const visualizers = List([WaveformVisualizer, pitchVisualizer]);    // similar to Visualizer[]
+const visualizers = List([WaveformVisualizer, SpectrumVisualizer, pitchVisualizer]);    // similar to Visualizer[]
 
 
 /**

@@ -25,7 +25,7 @@ const instruments = List([PianoInstrument, TripleOSCInstrument, slideWhistleInst
  * Start with the default waveform visualizer.
  * Add your visualizers to this list.
  */
-const visualizers = List([WaveformVisualizer, SpectrumVisualizer, pitchVisualizer]);    // similar to Visualizer[]
+const visualizers = List([WaveformVisualizer, SpectrumVisualizer, pitchVisualizer, faiyazc]);    // similar to Visualizer[]
 
 
 /**

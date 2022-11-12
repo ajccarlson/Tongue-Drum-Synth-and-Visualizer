@@ -25,7 +25,7 @@ export function VisualizerContainer({ visualizer }: VisualizerContainerProps) {
 
   let analyzerType: Tone.AnalyserType = 'waveform';
   let analyzerSize = 256;
-  if (visualizer.name != 'waveform') {
+  if (visualizer.name != 'Waveform') {
     analyzerType = 'fft';
     analyzerSize = 1024;
   }
